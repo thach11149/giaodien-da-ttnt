@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Brain, Clock, Settings2, Sliders, CheckCircle2, AlertCircle, ArrowRight, BookOpen } from 'lucide-react';
 import { KnowledgeType } from '../types';
-import { examApi, evaluatorApi, aiApi } from '../services/api';
+import { examApi, evaluatorApi, aiApi, questionApi } from '../services/api';
 
 interface Question {
     id: string;
@@ -26,6 +26,20 @@ const ExamCreator: React.FC = () => {
     const [loadingStep, setLoadingStep] = useState(0);
     const [questionCount, setQuestionCount] = useState(10);
     const [aiAdaptive, setAiAdaptive] = useState(true);
+    const [chapters, setChapters] = useState<any[]>([]);
+    const [selectedChapterId, setSelectedChapterId] = useState<string>("0");
+
+    useEffect(() => {
+        const fetchChapters = async () => {
+            try {
+                const res = await questionApi.getChapters();
+                setChapters(res.data);
+            } catch (e) {
+                console.error("Failed to fetch chapters", e);
+            }
+        };
+        fetchChapters();
+    }, []);
 
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIdx, setCurrentQuestionIdx] = useState(0);
@@ -62,7 +76,8 @@ const ExamCreator: React.FC = () => {
             const response = await examApi.generate({
                 limit: questionCount,
                 difficulty: aiAdaptive ? 2.5 : 2.0, // Example params
-                strategy: aiAdaptive ? 'adaptive' : 'random'
+                strategy: aiAdaptive ? 'adaptive' : 'random',
+                chapter_id: selectedChapterId
             });
 
             // Wait for animation to finish at least a bit
@@ -295,11 +310,15 @@ const ExamCreator: React.FC = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
                                 <label className="text-sm text-slate-500 font-medium">Target Chapter</label>
-                                <select className="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-lg p-3 outline-none">
-                                    <option>All Chapters</option>
-                                    <option>Chapter 1: Introduction</option>
-                                    <option>Chapter 2: Analysis Framework</option>
-                                    <option>Chapter 3: Divide & Conquer</option>
+                                <select
+                                    value={selectedChapterId}
+                                    onChange={(e) => setSelectedChapterId(e.target.value)}
+                                    className="w-full bg-slate-50 border border-slate-200 text-slate-800 rounded-lg p-3 outline-none"
+                                >
+                                    <option value="0">All Chapters</option>
+                                    {chapters.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>

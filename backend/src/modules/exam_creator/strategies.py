@@ -17,8 +17,13 @@ class AIAdaptiveStrategy(ExamGenerationStrategy):
         print("AI LOG: Calculating optimal question set based on user profile...")
         limit = params.get('limit', 10)
         target_diff = params.get('difficulty', 2.0) # Default medium difficulty
+        chapter_id = params.get('chapter_id')
         
-        all_questions = Question.query.all()
+        query = Question.query
+        if chapter_id and str(chapter_id) != "0": # 0 or None means all
+            query = query.filter_by(chapter_id=chapter_id)
+            
+        all_questions = query.all()
         if len(all_questions) < limit:
             return all_questions
             

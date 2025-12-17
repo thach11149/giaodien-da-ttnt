@@ -10,6 +10,7 @@ const api = axios.create({
 export const questionApi = {
     getAll: () => api.get('/questions'),
     add: (data: any) => api.post('/questions', data),
+    getChapters: () => api.get('/questions/chapters'),
 };
 
 export const examApi = {

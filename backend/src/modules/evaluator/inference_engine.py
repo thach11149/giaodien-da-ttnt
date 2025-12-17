@@ -38,6 +38,16 @@ class InferenceEngine:
 
         self.rules.append(Rule("Phát hiện điểm yếu", check_weakness, infer_weakness))
 
+        # Rule 1.5: Specific Advice for Master Theorem
+        def check_master_theorem(facts):
+            return any(f.name == "Weakness" and f.value == "Master Theorem" for f in facts)
+
+        def suggest_recursion(facts):
+            self.advice.append("Gợi ý: Để nắm vững Master Theorem, bạn nên ôn tập cách giải các phương trình đệ quy cơ bản.")
+            return []
+
+        self.rules.append(Rule("Gợi ý ôn tập Master Theorem", check_master_theorem, suggest_recursion))
+
         # Rule 2: High Score
         def check_high_score(facts):
             return any(f.name == "Total_Score" and f.value >= 0.8 for f in facts)

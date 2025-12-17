@@ -29,3 +29,11 @@ def add_question():
     db.session.add(new_question)
     db.session.commit()
     return jsonify({'message': 'Question added successfully'}), 201
+
+@question_bp.route('/chapters', methods=['GET'])
+def get_chapters():
+    chapters = Chapter.query.all()
+    return jsonify([{
+        'id': c.id,
+        'name': c.name
+    } for c in chapters])

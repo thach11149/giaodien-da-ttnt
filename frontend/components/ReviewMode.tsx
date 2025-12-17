@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
 import { List, Share2, Search, Filter } from 'lucide-react';
+import { questionApi } from '../services/api';
 
 const ReviewMode: React.FC = () => {
   const [viewMode, setViewMode] = useState<'list' | 'graph'>('graph');
@@ -212,4 +213,16 @@ const ReviewMode: React.FC = () => {
                       {node.id === 'MST' ? 'WEAK' : 'MASTERED'}
                     </span>
                   </div>
-                  <h3 className="text-
+                  <h3 className="text-slate-800 font-bold group-hover:text-[#4A00E0]">{node.label}</h3>
+                  <p className="text-slate-500 text-xs mt-2">Related to: Divide & Conquer</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ReviewMode;
